@@ -2,8 +2,7 @@ package com.example.demo2;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -72,7 +71,7 @@ public class Scrapping {
         return resultat;
     }//fin discogs
 
-    public static String fnac(String titre, String genre, String date, String prixmin, String prixmax) throws IOException, StringIndexOutOfBoundsException {
+    public static String fnac(String titre, String genre, String date, String prixmin, String prixmax) throws IOException {
 
         String url = "https://www.fnac.com/SearchResult/ResultList.aspx?SCat=3!1&SDM=list&Search="
                 + titre
@@ -80,12 +79,15 @@ public class Scrapping {
                 + "&SFilt=1!101%2c4!101&sft=1";
 
         String resultat = "x";
+
         if (prixmin.equals("")) {
             prixmin = "0";
         }
         if (prixmax.equals("")) {
             prixmax = "999999999";
         }
+
+        int nbResu = 0;
 
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
 
@@ -95,53 +97,147 @@ public class Scrapping {
         HtmlPage htmlPage = webClient.getPage(url);
 
 
-        List<HtmlElement> liste = htmlPage.getByXPath("//span/a");
+        List<HtmlAnchor> liste = htmlPage.getByXPath("//span/a");
+
+        System.out.println("Je suis dans le site !");
+
 
         for (HtmlElement element : liste) {
+
+            //for(int i = 0;i<5;i++) {
 
             String valeur = element.getTextContent();
 
 
             HtmlPage page2 = element.click();
 
+            System.out.println("Je suis dans liste !");
 
+            List<HtmlElement> prix = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[3]/div[1]/form/div/div[1]/label[1]/div[2]/span");
 
-                    List<HtmlElement> prix = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[3]/div[1]/form/div/div[1]/label[1]/div[2]/span");
+            for (HtmlElement p : prix) {
+                System.out.println("Je suis dans prix !");
 
-                    for (HtmlElement p : prix) {
+                String prixArticle = p.getTextContent();
+                prixArticle = prixArticle.replace("€", "");
 
+                prixArticle = prixArticle.replaceAll("\\s+", "");
+                prixArticle = prixArticle.replace("\u00a0", "");
+                prixArticle = prixArticle.replace(",", ".");
 
-                        String prixArticle = p.getTextContent();
-                        prixArticle = prixArticle.replace("€", "");
+                if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
 
-                        prixArticle = prixArticle.replaceAll("\\s+", "");
-                        prixArticle = prixArticle.replace("\u00a0", "");
-                        prixArticle = prixArticle.replace(",", ".");
+                    resultat += valeur + "\n Prix : " + prixArticle + "\n Description";
+                    System.out.println("J'ai commencé le resultat' !");
 
-                        if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+                    List<HtmlElement> description = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[2]/div");
 
-                            resultat += valeur + "\n Prix : " + prixArticle + "\n Description";
+                    for (HtmlElement d : description) {
 
-                            List<HtmlElement> description = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[2]/div");
+                        String descrip = d.getTextContent();
 
-                            for (HtmlElement d : description) {
+                        System.out.println("Je suis dans description !");
 
-                                String descrip = d.getTextContent();
-
-                                resultat += descrip + "\n";
-                                resultat += page2.getUrl() + "\n\n";
-                                resultat += "================================================================================================\n";
-                            }
-
-                        }
-
+                        resultat += descrip + "\n";
 
                     }
+
+                    nbResu++;
+                    System.out.println(nbResu);
+
+                    resultat += page2.getUrl() + "\n\n";
+                    resultat += "================================================================================================\n";
+
+
                 }
 
 
+            }
+        }
+
+
+        // }
 
         return resultat;
     }
 
-}
+    public static String vinylcorner(String titre, String genre, String date, String prixmin, String prixmax) throws IOException {
+
+        String url = "https://www.vinylcorner.fr/recherche?controller=search&s=" + titre + "+" + genre;
+
+        String resultat = "x";
+        if (prixmin.equals("")) {
+            prixmin = "0";
+        }
+        if (prixmax.equals("")) {
+            prixmax = "999999999";
+        }
+
+        int nbResu = 5;
+
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(false);
+        HtmlPage htmlPage = webClient.getPage(url);
+
+        List<HtmlElement> liste = htmlPage.getByXPath("//h2/a");
+
+        for (HtmlElement element : liste) {
+
+            HtmlPage page2 = element.click();
+            String valeur = ((HtmlHeading2) page2.getByXPath("//div[1]/h2").get(0)).getTextContent();
+            String prixArticle = ((HtmlElement) page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[2]/div[1]/div/span").get(0)).getTextContent();
+
+            prixArticle = prixArticle.replace("€", "");
+
+            prixArticle = prixArticle.replaceAll("\\s+", "");
+            prixArticle = prixArticle.replace("\u00a0", "");
+            prixArticle = prixArticle.replace(",", ".");
+
+            if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+
+                resultat += valeur + "\n Prix : " + prixArticle + "\n";
+
+
+                String descrip = "";
+
+                descrip += ((HtmlElement) page2.getByXPath("//div[2]/div[4]/div").get(0)).getTextContent();
+
+                if (descrip.equals("")) {
+
+                    List<HtmlElement> description = page2.getByXPath("//div/div[2]/div[2]");
+
+                    for (int t = 0; t < description.size() - 1; t++) {
+
+
+                        List<HtmlElement> audio = page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[4]/div[" + Integer.toString(2 + t) + "]/span");
+
+                        for (HtmlElement a : audio) {
+
+
+                            descrip += a.getTextContent()+ ", ";
+
+                        }
+
+                    }
+
+
+                }
+
+                resultat += "Description : " + descrip + "\n";
+                resultat += page2.getUrl() + "\n\n";
+                resultat += "================================================================================================\n";
+            }
+
+        }
+        return resultat;
+    }
+
+
+
+
+
+
+}//fin Scrapping

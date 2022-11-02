@@ -38,10 +38,12 @@ public class ScrapController {
     Menu Recherche
 
      */
+    @FXML
+    protected ToggleGroup choixSite = new ToggleGroup();
+
 
     @FXML
     protected RadioButton discogs;
-
     @FXML
     protected RadioButton fnac;
     @FXML
@@ -96,7 +98,9 @@ public class ScrapController {
     protected void onClickRecherche() throws IOException {
 
         String resu;
+
         LocalDate year= date.getValue();
+
         String annee;
 
         if(year==null){
@@ -135,6 +139,9 @@ public class ScrapController {
                 resultat.setText(Scrapping.fnac(nom,genre, annee, prixMini, prixMaxi));
 
             } else if (vinylcorn.isSelected()) {
+
+                resultat.setText(Scrapping.vinylcorner(nom,genre, annee, prixMini, prixMaxi));
+
 
             } else if (leboncoin.isSelected()) {
 
@@ -250,7 +257,7 @@ public class ScrapController {
     public void onEffacerClick(){
         titre.clear();
         menuGenre.getSelectionModel().clearSelection();
-
+        menuGenre.setPromptText("Selectionnez un genre....");
         date.setValue(null);
         prixMin.clear();
         prixMax.clear();
