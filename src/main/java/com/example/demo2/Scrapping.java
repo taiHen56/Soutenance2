@@ -6,8 +6,6 @@ import com.gargoylesoftware.htmlunit.html.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Scrapping {
 
@@ -165,15 +163,22 @@ public class Scrapping {
 
         String url = "https://www.vinylcorner.fr/recherche?controller=search&s=" + titre + "+" + genre;
 
-        String resultat = "x";
+        String resultat = "";
         if (prixmin.equals("")) {
             prixmin = "0";
         }
         if (prixmax.equals("")) {
             prixmax = "999999999";
         }
+        if (genre.equals("")){
+            genre=".";
+        }
+        if(date.equals("")){
+            date=".";
+        }
 
-        int nbResu = 5;
+
+
 
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
 
@@ -187,37 +192,49 @@ public class Scrapping {
         for (HtmlElement element : liste) {
 
             HtmlPage page2 = element.click();
-            String valeur = ((HtmlHeading2) page2.getByXPath("//div[1]/h2").get(0)).getTextContent();
-            String prixArticle = ((HtmlElement) page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[2]/div[1]/div/span").get(0)).getTextContent();
 
-            prixArticle = prixArticle.replace("€", "");
+            String genra = ((HtmlParagraph) page2.getByXPath("//p[@class='ref-genre-cat show-list-only']").get(0)).getTextContent();
+            genra += ".";
 
-            prixArticle = prixArticle.replaceAll("\\s+", "");
-            prixArticle = prixArticle.replace("\u00a0", "");
-            prixArticle = prixArticle.replace(",", ".");
+            if (genra.contains(genre)) {
 
-            if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+                String parution = ((HtmlStrong) page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[1]/p[2]/strong").get(0)).getTextContent();
+                parution += ".";
 
-                resultat += valeur + "\n Prix : " + prixArticle + "\n";
+                if (parution.contains(date)) {
+
+                    String valeur = ((HtmlHeading2) page2.getByXPath("//div[1]/h2").get(0)).getTextContent();
+                    String prixArticle = ((HtmlElement) page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[2]/div[1]/div/span").get(0)).getTextContent();
+
+                    prixArticle = prixArticle.replace("€", "");
+
+                    prixArticle = prixArticle.replaceAll("\\s+", "");
+                    prixArticle = prixArticle.replace("\u00a0", "");
+                    prixArticle = prixArticle.replace(",", ".");
+
+                    if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+
+                        resultat += valeur + "\n Prix : " + prixArticle + "\n";
 
 
-                String descrip = "";
+                        String descrip = "";
 
-                List<HtmlElement> description = page2.getByXPath("//div[@class='features']");
+                        List<HtmlElement> description = page2.getByXPath("//div[@class='features']");
 
-                    for(HtmlElement d : description){
-                        descrip+= d.getTextContent();
+                        for (HtmlElement d : description) {
+                            descrip += d.getTextContent();
+                        }
+
+                        descrip = descrip.replace(valeur, "");
+
+
+                        resultat += "Description : " + descrip + "\n";
+                        resultat += page2.getUrl() + "\n\n";
+                        resultat += "================================================================================================\n";
                     }
 
-                    descrip=descrip.replace(valeur,"");
-
-
-
-                resultat += "Description : " + descrip + "\n";
-                resultat += page2.getUrl() + "\n\n";
-                resultat += "================================================================================================\n";
+                }
             }
-
         }
         return resultat;
     }
