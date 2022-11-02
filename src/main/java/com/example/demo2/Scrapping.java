@@ -203,28 +203,15 @@ public class Scrapping {
 
                 String descrip = "";
 
-                descrip += ((HtmlElement) page2.getByXPath("//div[2]/div[4]/div").get(0)).getTextContent();
+                List<HtmlElement> description = page2.getByXPath("//div[@class='features']");
 
-                if (descrip.equals("")) {
-
-                    List<HtmlElement> description = page2.getByXPath("//div/div[2]/div[2]");
-
-                    for (int t = 0; t < description.size() - 1; t++) {
-
-
-                        List<HtmlElement> audio = page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[4]/div[" + Integer.toString(2 + t) + "]/span");
-
-                        for (HtmlElement a : audio) {
-
-
-                            descrip += a.getTextContent()+ ", ";
-
-                        }
-
+                    for(HtmlElement d : description){
+                        descrip+= d.getTextContent();
                     }
 
+                    descrip=descrip.replace(valeur,"");
 
-                }
+
 
                 resultat += "Description : " + descrip + "\n";
                 resultat += page2.getUrl() + "\n\n";
