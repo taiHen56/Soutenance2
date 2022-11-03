@@ -152,9 +152,11 @@ public class ScrapController {
 
             } else if (mesvinyles.isSelected()) {
 
-                resultat.setText((Scrapping.mesVinyles(nom,genre, annee, prixMini, prixMaxi)));
+                resultat.setText(Scrapping.mesVinyles(nom,genre, annee, prixMini, prixMaxi));
 
             } else if (culturefac.isSelected()) {
+
+                resultat.setText(Scrapping.cultureFac(nom,genre,prixMini,prixMaxi));
 
             } else {
                 labelRecherche.setText("Veuillez selectionner un site!");

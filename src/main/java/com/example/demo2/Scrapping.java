@@ -359,7 +359,76 @@ public class Scrapping {
         return resultat;
     }
 
+    public static String cultureFac(String titre, String genre, String prixmin, String prixmax)throws  IOException{
 
+        String resultat= "";
+        String url = "https://culturefactory.fr/recherche?controller=search&s="+titre+" "+genre;
+
+        if (prixmin.equals("")) {
+            prixmin = "0";
+        }
+        if (prixmax.equals("")) {
+            prixmax = "999999999";
+        }
+
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(false);
+        HtmlPage htmlPage = webClient.getPage(url);
+
+        List<HtmlElement> liste = htmlPage.getByXPath("//article/div[2]/h4/a");
+
+        for(HtmlElement element :  liste){
+
+            if(element.getTextContent().contains(titre)){
+
+                if(element.getTextContent().toLowerCase().contains("cd")  || element.getTextContent().toLowerCase().contains("vinyl")){
+
+                    HtmlPage page2 = element.click();
+                    String prixArticle = ((HtmlSpan) page2.getByXPath("//span[@class='price ']").get(0)).getTextContent();
+
+                    prixArticle = prixArticle.replace("€", "");
+                    prixArticle = prixArticle.replaceAll("\\s+", "");
+                    prixArticle = prixArticle.replace("\u00a0", "");
+                    prixArticle = prixArticle.replace(",", ".");
+
+                    if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+
+                        String valeur = ((HtmlHeading1) page2.getByXPath("//h1[@class='h1 namne_details']").get(0)).getTextContent();
+
+                        resultat +="Titre de l'album"+ valeur + "\n Prix : " + prixArticle + "€\n";
+
+
+                        String descrip = "";
+
+                        List<HtmlElement> description = page2.getByXPath("//div[@class='product-description']");
+
+                        for (HtmlElement d : description) {
+                            descrip += d.getTextContent()+"\n";
+                        }
+
+                        resultat += "Description : " + descrip + "\n";
+                        resultat += page2.getUrl() + "\n\n";
+                        resultat += "================================================================================================\n";
+
+
+                    }
+
+
+                }
+            }
+        }
+
+
+        if(resultat.equals("")){
+            resultat="Aucun résultat trouvé....";
+        }
+
+
+        return resultat;
+    }
 
 
 }//fin Scrapping
