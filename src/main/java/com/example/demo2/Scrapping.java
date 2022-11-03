@@ -76,13 +76,16 @@ public class Scrapping {
                 + genre
                 + "&SFilt=1!101%2c4!101&sft=1";
 
-        String resultat = "x";
+        String resultat = "";
 
         if (prixmin.equals("")) {
             prixmin = "0";
         }
         if (prixmax.equals("")) {
             prixmax = "999999999";
+        }
+        if(date.equals("")){
+            date=".";
         }
 
         int nbResu = 0;
@@ -95,69 +98,76 @@ public class Scrapping {
         HtmlPage htmlPage = webClient.getPage(url);
 
 
-        List<HtmlAnchor> liste = htmlPage.getByXPath("//span/a");
+        List<HtmlAnchor> liste = htmlPage.getByXPath("//article/form/div[2]/div/p[1]/span/a");
 
         System.out.println("Je suis dans le site !");
 
 
         for (HtmlElement element : liste) {
 
-            //for(int i = 0;i<5;i++) {
-
-            String valeur = element.getTextContent();
+            if(nbResu<6) {
 
 
-            HtmlPage page2 = element.click();
+                String valeur = element.getTextContent();
 
-            System.out.println("Je suis dans liste !");
 
-            List<HtmlElement> prix = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[3]/div[1]/form/div/div[1]/label[1]/div[2]/span");
+                HtmlPage page2 = element.click();
 
-            for (HtmlElement p : prix) {
-                System.out.println("Je suis dans prix !");
+                String parution = ((HtmlParagraph) page2.getByXPath("//div[2]/dl[2]/dd/p").get(0)).getTextContent();
+                parution += ".";
+                System.out.println(parution);
 
-                String prixArticle = p.getTextContent();
-                prixArticle = prixArticle.replace("€", "");
+                if (parution.contains(date)){
 
-                prixArticle = prixArticle.replaceAll("\\s+", "");
-                prixArticle = prixArticle.replace("\u00a0", "");
-                prixArticle = prixArticle.replace(",", ".");
 
-                if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+                    System.out.println("Je suis dans liste !");
 
-                    resultat += valeur + "\n Prix : " + prixArticle + "\n Description";
-                    System.out.println("J'ai commencé le resultat' !");
 
-                    List<HtmlElement> description = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[2]/div");
+                    String prixArticle = ((HtmlSpan) page2.getByXPath(".//span[contains(@class,'userPrice')]").get(0)).getTextContent();
 
-                    for (HtmlElement d : description) {
+                    System.out.println(prixArticle);
 
-                        String descrip = d.getTextContent();
+                     prixArticle = prixArticle.replace("€", "");
 
-                        System.out.println("Je suis dans description !");
+                     prixArticle = prixArticle.replaceAll("\\s+", "");
+                     prixArticle = prixArticle.replace("\u00a0", "");
+                     prixArticle = prixArticle.replace(",", ".");
 
-                        resultat += descrip + "\n";
+                     if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
 
-                    }
+                        resultat += valeur + "\n Prix : " + prixArticle + "\n Description";
+                        System.out.println("J'ai commencé le resultat' !");
+
+                        List<HtmlElement> description = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[2]/div");
+
+                        for (HtmlElement d : description) {
+
+                            String descrip = d.getTextContent();
+
+                            System.out.println("Je suis dans description !");
+
+                            resultat += descrip + "\n";
+
+                         }
 
                     nbResu++;
                     System.out.println(nbResu);
 
                     resultat += page2.getUrl() + "\n\n";
                     resultat += "================================================================================================\n";
+                    nbResu++;
 
 
                 }
-
-
             }
+
         }
 
 
-        // }
+        }
 
         return resultat;
-    }
+    }//fin fnac
 
     public static String vinylcorner(String titre, String genre, String date, String prixmin, String prixmax) throws IOException {
 
