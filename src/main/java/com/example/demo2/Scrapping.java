@@ -207,7 +207,6 @@ public class Scrapping {
                     String prixArticle = ((HtmlElement) page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[2]/div[1]/div/span").get(0)).getTextContent();
 
                     prixArticle = prixArticle.replace("€", "");
-
                     prixArticle = prixArticle.replaceAll("\\s+", "");
                     prixArticle = prixArticle.replace("\u00a0", "");
                     prixArticle = prixArticle.replace(",", ".");
@@ -237,9 +236,118 @@ public class Scrapping {
             }
         }
         return resultat;
+    }//fin vinylcorner
+
+
+    public static String leboncoin(String titre, String genre, String prixmin, String prixmax) throws  IOException{
+
+        if (genre.equals("")){
+            genre="";
+        }
+
+        String url ="https://www.leboncoin.fr/recherche?category=26&text="+titre+" "+genre+"&price=" + prixmin + "-" + prixmax;
+        String resultat="";
+
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(false);
+        HtmlPage htmlPage = webClient.getPage(url);
+
+        List<HtmlElement> liste = htmlPage.getByXPath("//div[2]/div[1]/p");
+
+        for(HtmlElement element : liste){
+
+            HtmlPage page2 = element.click();
+
+            String nomArticle = ((HtmlHeading1) page2.getByXPath("//div[3]/div/div/h1").get(0)).getTextContent() ;
+            String prixArticle = ((HtmlSpan) page2.getByXPath("//div[3]/div/span//div/div[1]/div/span").get(0)).getTextContent();
+            String description = ((HtmlParagraph) page2.getByXPath("//div[5]/div/div/p").get(0)).getTextContent();
+
+
+            resultat += "Titre : " + nomArticle + "\nPrix : " + prixArticle + "\nDescription : " + description + "\nLien : " + page2.getUrl() +
+                    "\n\"================================================================================================\\n\"\n";
+
+        }
+
+
+
+        return resultat;
+    }//fin lbc
+
+    public static String mesVinyles(String titre, String genre, String date, String prixmin, String prixmax)throws  IOException{
+        String resultat="";
+
+        if(date.equals("")){
+            date=".";
+        }
+        if (prixmin.equals("")) {
+            prixmin = "0";
+        }
+        if (prixmax.equals("")) {
+            prixmax = "999999999";
+        }
+
+        String url="https://mesvinyles.fr/fr/recherche?controller=search&s="+titre + " "+genre;
+
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
+
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(false);
+        HtmlPage htmlPage = webClient.getPage(url);
+
+        List<HtmlElement> liste = htmlPage.getByXPath("//div/div[2]/h3/a");
+
+        for(HtmlElement element :  liste){
+
+            HtmlPage page2 = element.click();
+
+            String parution = ((HtmlParagraph) page2.getByXPath("/html/body/main/section/div/div/div/section/div[1]/div[2]/div[2]/div[1]/p[1]").get(0)).getTextContent();
+            System.out.println(parution);
+            parution += ".";
+
+            if (parution.contains(date)) {
+
+
+                String prixArticle = ((HtmlDivision) page2.getByXPath("//div[@class='current-price']").get(0)).getTextContent();
+
+                prixArticle = prixArticle.replace("€", "");
+                prixArticle = prixArticle.replaceAll("\\s+", "");
+                prixArticle = prixArticle.replace("\u00a0", "");
+                prixArticle = prixArticle.replace(",", ".");
+
+                if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+
+                    String valeur = ((HtmlHeading1) page2.getByXPath("//h1[@class='h1 productpage_title']").get(0)).getTextContent();
+
+                    resultat +="Titre de l'album"+ valeur + "\n Prix : " + prixArticle + "€\n";
+
+
+                    String descrip = "";
+
+                    List<HtmlElement> description = page2.getByXPath("//div[@class='product-description']");
+
+                    for (HtmlElement d : description) {
+                        descrip += d.getTextContent();
+                    }
+
+
+                    resultat += "Description : " + descrip + "\n";
+                    resultat += page2.getUrl() + "\n\n";
+                    resultat += "================================================================================================\n";
+                }
+
+
+
+
+            }
+
+        }
+
+        return resultat;
     }
-
-
 
 
 

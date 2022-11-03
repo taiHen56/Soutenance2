@@ -117,6 +117,9 @@ public class ScrapController {
         String nom = titre.getText();
 
         String genre = (String) menuGenre.getValue();
+        if(genre==null){
+            genre="";
+        }
 
 
         String prixMini = prixMin.getText();
@@ -145,7 +148,11 @@ public class ScrapController {
 
             } else if (leboncoin.isSelected()) {
 
+                resultat.setText(Scrapping.leboncoin(nom,genre,prixMini,prixMaxi));
+
             } else if (mesvinyles.isSelected()) {
+
+                resultat.setText((Scrapping.mesVinyles(nom,genre, annee, prixMini, prixMaxi)));
 
             } else if (culturefac.isSelected()) {
 
@@ -236,6 +243,7 @@ public class ScrapController {
                    // label1.setText("NEVER GONNA GIVE YOU UP");
 
                     enregistrerFicher(resultat.getText(), fichierResultat);
+
                     EnvoiEmail.envoi(email.getText(),fichierResultat);
 
                 }else{
