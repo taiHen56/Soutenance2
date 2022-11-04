@@ -1,0 +1,39 @@
+Bienvenue sur l'application Scraping, un programme qui vous permet de rechercher dans different sites web des CD ou Vinyls d'artistes !
+
+Au programme :
+
+1 - Faire une recherche
+2 - Enregistrer dans un fichier
+3 - Envoyer vos résultats par email
+4 - Envoyer vos résultats dans une base de données
+
+
+1 ================================= Faire une recherche ! =================================
+
+
+    Pour éxecuter une recherche, vous devez saisir un nom d'artiste/d'album et sélectionner un site. Suite a ça vous avez différents paramètres de recherche
+disponibles pour vous faciliter la recherche :
+
+ ---> Genre, où vous pour selectioner un genre parmi 8 genres de musique
+ ---> Date, la date de sortie d'un album
+ ---> Prix, où vous pouvez renseigner votre budget pour
+
+ Après cela cliquez sur rechercher pour lancer la recherche et donc afficher suite a cela vos résultats.
+ Notez que si vous vous trompez et/ou voulez recommencer une recherche un bouton "Effacer" est mis a disposition pour.
+
+
+ 2 ================================= Enregistrer dans un fichier ! =================================
+
+    Suite à votre recherche, vous pouvez enregistrer cette dernière pour pouvoir la consulter plus tard, en format
+ .txt. Vous pouvez enregistrer ce même fichier où vous voulez et également le renommer
+
+
+3 ================================= Envoyer vos résultats par email  ! =================================
+
+    Suite à votre recherche, vous pouvez envoyer cette dernière par email à qui vous voulez. Assurez-vous d'avoir une
+    connexion internet et d'avoir un email valide (et de bien l'orthographier !).
+
+4 ================================= Envoyer vos résultats dans une base de données ! =================================
+
+    Suite à votre recherche, vous pouvez envoyer vos résultats dans une base de donnés. Assurez-vous d'avoir une connexion internet
+    et d'avoir au préalable parametrée votre Base de Données dans Paramètres > Base de Données.

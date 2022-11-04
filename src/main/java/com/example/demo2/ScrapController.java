@@ -71,7 +71,14 @@ public class ScrapController {
     @FXML
     protected Button effacer;
 
+    @FXML
+    protected Button rechercheButton;
+
+    @FXML
+    protected ProgressBar barreRecherche;
+
     File fichierResultat = new File("resultat.txt");
+    File modeEmploi = new File("modeEmploi.txt");
 
     public void HomeScene() throws IOException {
         try{
@@ -95,13 +102,15 @@ public class ScrapController {
     protected void onClickParametresBDD() throws IOException{ HomeScene();}
 
     @FXML
-    protected void onClickRecherche() throws IOException {
+    protected void onClickRecherche()  {
 
-        String resu;
-
+        String nom = titre.getText();
+        String genre = (String) menuGenre.getValue();
         LocalDate year= date.getValue();
-
         String annee;
+        String prixMini = prixMin.getText();
+        String prixMaxi = prixMax.getText();
+
 
         if(year==null){
 
@@ -113,57 +122,158 @@ public class ScrapController {
 
         }
 
-
-        String nom = titre.getText();
-
-        String genre = (String) menuGenre.getValue();
         if(genre==null){
             genre="";
         }
 
-
-        String prixMini = prixMin.getText();
-
-        String prixMaxi = prixMax.getText();
-
-        String site;
 
         if(nom==""){
 
             labelRecherche.setText("J'ai besoin d'une Titre...");
 
         }else{
+            String site="";
             if (discogs.isSelected()) {
 
-                resultat.setText(Scrapping.discogs(nom,genre, annee,prixMini,prixMaxi));
+                // resultat.setText(Scrapping.discogs(nom,genre, annee,prixMini,prixMaxi));
+
+                site="d";
+
+                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
+
+                Thread scrapThread = new Thread(scrapTask);
+                scrapThread.start();
+                while(scrapThread.isAlive()){
+                    rechercheButton.setDisable(true);
+                    barreRecherche.setProgress(0);
+                    barreRecherche.progressProperty().unbind();
+
+                   barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                }
+
+                rechercheButton.setDisable(false);
+                resultat.setText(scrapTask.getResu());
 
             } else if (fnac.isSelected()) {
 
-                resultat.setText(Scrapping.fnac(nom,genre, annee, prixMini, prixMaxi));
+                //resultat.setText(Scrapping.fnac(nom,genre, annee, prixMini, prixMaxi));
+
+                site="f";
+                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
+
+
+
+                Thread scrapThread = new Thread(scrapTask);
+                scrapThread.start();
+                while(scrapThread.isAlive()){
+                    rechercheButton.setDisable(true);
+                    barreRecherche.setProgress(0);
+                    barreRecherche.progressProperty().unbind();
+
+                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                }
+
+                rechercheButton.setDisable(false);
+                resultat.setText(scrapTask.getResu());
+
 
             } else if (vinylcorn.isSelected()) {
 
-                resultat.setText(Scrapping.vinylcorner(nom,genre, annee, prixMini, prixMaxi));
+                //resultat.setText(Scrapping.vinylcorner(nom,genre, annee, prixMini, prixMaxi));
+
+                site="v";
+                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
+
+                Thread scrapThread = new Thread(scrapTask);
+                scrapThread.start();
+                while(scrapThread.isAlive()){
+                    rechercheButton.setDisable(true);
+                    barreRecherche.setProgress(0);
+                    barreRecherche.progressProperty().unbind();
+
+                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                }
+
+                rechercheButton.setDisable(false);
+                resultat.setText(scrapTask.getResu());
 
 
             } else if (leboncoin.isSelected()) {
 
-                resultat.setText(Scrapping.leboncoin(nom,genre,prixMini,prixMaxi));
+               // resultat.setText(Scrapping.leboncoin(nom,genre,prixMini,prixMaxi));
+
+                site="l";
+                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
+
+                Thread scrapThread = new Thread(scrapTask);
+                scrapThread.start();
+                while(scrapThread.isAlive()){
+                    rechercheButton.setDisable(true);
+                    barreRecherche.setProgress(0);
+                    barreRecherche.progressProperty().unbind();
+
+                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                }
+
+                rechercheButton.setDisable(false);
+                resultat.setText(scrapTask.getResu());
+
 
             } else if (mesvinyles.isSelected()) {
 
-                resultat.setText(Scrapping.mesVinyles(nom,genre, annee, prixMini, prixMaxi));
+                //resultat.setText(Scrapping.mesVinyles(nom,genre, annee, prixMini, prixMaxi));
+                site="m";
+                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
+
+                Thread scrapThread = new Thread(scrapTask);
+                scrapThread.start();
+                while(scrapThread.isAlive()){
+                    rechercheButton.setDisable(true);
+                    barreRecherche.setProgress(0);
+                    barreRecherche.progressProperty().unbind();
+
+                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                }
+
+                rechercheButton.setDisable(false);
+                resultat.setText(scrapTask.getResu());
+
 
             } else if (culturefac.isSelected()) {
 
-                resultat.setText(Scrapping.cultureFac(nom,genre,prixMini,prixMaxi));
+                //resultat.setText(Scrapping.cultureFac(nom,genre,prixMini,prixMaxi));
+
+                site="c";
+                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
+
+                Thread scrapThread = new Thread(scrapTask);
+
+
+                rechercheButton.setDisable(true);
+                barreRecherche.setProgress(0);
+                barreRecherche.progressProperty().unbind();
+                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+
+                scrapThread.start();
+
+                resultat.setText(scrapTask.getResu());
+
+                /*
+                @TODO
+                continue a chercher pour la progressbar, tu peux la mettre a 100 des que t'as un resultat oklm
+                 */
+
+
 
             } else {
                 labelRecherche.setText("Veuillez selectionner un site!");
             }
         }
 
-    }
+
+
+    }//onClickRecherche
+
     public void saveFile(ActionEvent event) throws FileNotFoundException {
 
         Stage stage = new Stage();
@@ -277,6 +387,41 @@ public class ScrapController {
         leboncoin.setSelected(false);
         mesvinyles.setSelected(false);
         culturefac.setSelected(false);
+        barreRecherche.setProgress(0);
+        rechercheButton.setDisable(false);
+    }
+
+    public void onModeDemploiClick() throws IOException {
+
+        Stage popupwindow=new Stage();
+
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("Comment utiliser Scraping?");
+        TextArea manual = new TextArea();
+        manual.setPrefWidth(450);
+        manual.setPrefHeight(515);
+
+        FileReader fr = new FileReader(modeEmploi);
+        // Créer l'objet BufferedReader
+        BufferedReader br = new BufferedReader(fr);
+        StringBuffer sb = new StringBuffer();
+        String line;
+        String resu = "";
+        while((line = br.readLine()) != null)
+        {
+            resu+=line +"\n";
+
+
+        }
+        fr.close();
+        manual.setText(resu);
+        VBox layout= new VBox(10);
+        layout.getChildren().addAll(manual);
+        layout.setAlignment(Pos.CENTER);
+        Scene scene1= new Scene(layout, 450, 515);
+        popupwindow.setScene(scene1);
+        popupwindow.showAndWait();
+
     }
 
 
