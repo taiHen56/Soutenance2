@@ -17,7 +17,7 @@ public class ScrapThread extends Task {
         this.annee=annee;
         this.mini=mini;
         this.max=max;
-        out=null;
+        out="nada amigo";
     }
 
     public Object call(){
@@ -36,7 +36,7 @@ public class ScrapThread extends Task {
 
         } else if (site.equals("l")) {
 
-            out=Scrapping.leboncoin(nom,genre, mini,max);
+            out=Scrapping.leboncoin(nom,genre,annee, mini,max);
 
 
         }else if ((site.equals("m"))){
@@ -46,7 +46,7 @@ public class ScrapThread extends Task {
 
         } else if (site.equals("c")) {
 
-            out=Scrapping.cultureFac(nom,genre,mini,max);
+            out=Scrapping.cultureFac(nom,genre,annee,mini,max);
 
         }
     } catch (IOException e) {

@@ -5,12 +5,30 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Scrapping {
 
+    private String nom,titre,genre,date,prixmin,prixmax;
+    private ArrayList<String[]> resuBDD;
 
-    public static String discogs(String titre, String genre, String date, String prixmin, String prixmax) throws IOException {
+
+
+    public Scrapping(String titre, String genre, String date, String prixmin, String prixmax){
+        this.nom=nom;
+        this.genre=genre;
+        this.date=date;
+        this.prixmin=prixmin;
+        this.prixmax=prixmax;
+        resuBDD = new ArrayList<String[]>();
+    }
+
+    public ArrayList<String[]> getResuBDD() {
+        return resuBDD;
+    }
+
+    public String discogs() throws IOException {
 
         String url = "https://www.discogs.com/fr/sell/list?price1=" + prixmin +
                 "&price2=" + prixmax +
@@ -30,6 +48,7 @@ public class Scrapping {
 
         for (HtmlElement element : liste) {
 
+            for (int i = 0; i < liste.size();i++){
             String valeur = element.getTextContent();
 
 
@@ -61,15 +80,23 @@ public class Scrapping {
                     resultat += descrip + "\n";
                     resultat += page2.getUrl() + "\n\n";
                     resultat += "================================================================================================\n";
+
+
+                    String[] ajouter = {valeur, descrip, prixArticle, date};
+                    resuBDD.add(ajouter);
+
                 }
 
+
             }
+
+        }
 
         }
         return resultat;
     }//fin discogs
 
-    public static String fnac(String titre, String genre, String date, String prixmin, String prixmax) throws IOException {
+    public String fnac() throws IOException {
 
         String url = "https://www.fnac.com/SearchResult/ResultList.aspx?SCat=3!1&SDM=list&Search="
                 + titre
@@ -105,71 +132,78 @@ public class Scrapping {
 
         for (HtmlElement element : liste) {
 
-            if(nbResu<6) {
+            for (int i = 0; i < liste.size(); i++){
 
 
-                String valeur = element.getTextContent();
+                if (nbResu < 6) {
 
 
-                HtmlPage page2 = element.click();
-
-                String parution = ((HtmlParagraph) page2.getByXPath("//div[2]/dl[2]/dd/p").get(0)).getTextContent();
-                parution += ".";
-                System.out.println(parution);
-
-                if (parution.contains(date)){
+                    String valeur = element.getTextContent();
 
 
-                    System.out.println("Je suis dans liste !");
+                    HtmlPage page2 = element.click();
+
+                    String parution = ((HtmlParagraph) page2.getByXPath("//div[2]/dl[2]/dd/p").get(0)).getTextContent();
+                    parution += ".";
+                    System.out.println(parution);
+
+                    if (parution.contains(date)) {
 
 
-                    String prixArticle = ((HtmlSpan) page2.getByXPath(".//span[contains(@class,'userPrice')]").get(0)).getTextContent();
+                        System.out.println("Je suis dans liste !");
 
-                    System.out.println(prixArticle);
 
-                     prixArticle = prixArticle.replace("€", "");
+                        String prixArticle = ((HtmlSpan) page2.getByXPath(".//span[contains(@class,'userPrice')]").get(0)).getTextContent();
 
-                     prixArticle = prixArticle.replaceAll("\\s+", "");
-                     prixArticle = prixArticle.replace("\u00a0", "");
-                     prixArticle = prixArticle.replace(",", ".");
+                        System.out.println(prixArticle);
 
-                     if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
+                        prixArticle = prixArticle.replace("€", "");
 
-                        resultat += valeur + "\n Prix : " + prixArticle + "\n Description";
-                        System.out.println("J'ai commencé le resultat' !");
+                        prixArticle = prixArticle.replaceAll("\\s+", "");
+                        prixArticle = prixArticle.replace("\u00a0", "");
+                        prixArticle = prixArticle.replace(",", ".");
 
-                        List<HtmlElement> description = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[2]/div");
+                        if (Double.parseDouble(prixmin) <= Double.parseDouble(prixArticle) && Double.parseDouble(prixArticle) <= Double.parseDouble(prixmax)) {
 
-                        for (HtmlElement d : description) {
+                            resultat += valeur + "\n Prix : " + prixArticle + "\n Description";
+                            System.out.println("J'ai commencé le resultat' !");
 
-                            String descrip = d.getTextContent();
+                            List<HtmlElement> description = page2.getByXPath("/html/body/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[2]/div");
 
-                            System.out.println("Je suis dans description !");
+                            for (HtmlElement d : description) {
 
-                            resultat += descrip + "\n";
+                                String descrip = d.getTextContent();
 
-                         }
+                                System.out.println("Je suis dans description !");
 
-                    nbResu++;
-                    System.out.println(nbResu);
+                                resultat += descrip + "\n";
 
-                    resultat += page2.getUrl() + "\n\n";
-                    resultat += "================================================================================================\n";
-                    nbResu++;
+                                String[] ajouter = {valeur, descrip, prixArticle, date};
+                                resuBDD.add(ajouter);
+                            }
 
+                            nbResu++;
+                            System.out.println(nbResu);
+
+                            resultat += page2.getUrl() + "\n\n";
+                            resultat += "================================================================================================\n";
+                            nbResu++;
+
+
+
+
+                        }
+                    }
 
                 }
-            }
-
         }
-
 
         }
 
         return resultat;
     }//fin fnac
 
-    public static String vinylcorner(String titre, String genre, String date, String prixmin, String prixmax) throws IOException {
+    public String vinylcorner() throws IOException {
 
         String url = "https://www.vinylcorner.fr/recherche?controller=search&s=" + titre + "+" + genre;
 
@@ -200,8 +234,10 @@ public class Scrapping {
         List<HtmlElement> liste = htmlPage.getByXPath("//h2/a");
 
         for (HtmlElement element : liste) {
+            for (int i = 0; i < liste.size();i++){
 
-            HtmlPage page2 = element.click();
+
+                HtmlPage page2 = element.click();
 
             String genra = ((HtmlParagraph) page2.getByXPath("//p[@class='ref-genre-cat show-list-only']").get(0)).getTextContent();
             genra += ".";
@@ -236,6 +272,9 @@ public class Scrapping {
 
                         descrip = descrip.replace(valeur, "");
 
+                        String[] ajouter = {valeur, descrip, prixArticle, date};
+                        resuBDD.add(ajouter);
+
 
                         resultat += "Description : " + descrip + "\n";
                         resultat += page2.getUrl() + "\n\n";
@@ -245,14 +284,18 @@ public class Scrapping {
                 }
             }
         }
+        }
         return resultat;
     }//fin vinylcorner
 
 
-    public static String leboncoin(String titre, String genre, String prixmin, String prixmax) throws  IOException{
+    public String leboncoin() throws  IOException{
 
         if (genre.equals("")){
             genre="";
+        }
+        if(date.equals("")){
+            date=".";
         }
 
         String url ="https://www.leboncoin.fr/recherche?category=26&text="+titre+" "+genre+"&price=" + prixmin + "-" + prixmax;
@@ -267,11 +310,12 @@ public class Scrapping {
 
         List<HtmlElement> liste = htmlPage.getByXPath("//div[2]/div[1]/p");
 
-        for(HtmlElement element : liste){
+        for(HtmlElement element : liste) {
+            for (int i = 0; i < liste.size();i++){
 
             HtmlPage page2 = element.click();
 
-            String nomArticle = ((HtmlHeading1) page2.getByXPath("//div[3]/div/div/h1").get(0)).getTextContent() ;
+            String nomArticle = ((HtmlHeading1) page2.getByXPath("//div[3]/div/div/h1").get(0)).getTextContent();
             String prixArticle = ((HtmlSpan) page2.getByXPath("//div[3]/div/span//div/div[1]/div/span").get(0)).getTextContent();
             String description = ((HtmlParagraph) page2.getByXPath("//div[5]/div/div/p").get(0)).getTextContent();
 
@@ -279,6 +323,10 @@ public class Scrapping {
             resultat += "Titre : " + nomArticle + "\nPrix : " + prixArticle + "\nDescription : " + description + "\nLien : " + page2.getUrl() +
                     "\n\"================================================================================================\\n\"\n";
 
+                String[] ajouter = {nomArticle, description, prixArticle, date};
+                resuBDD.add(ajouter);
+
+        }
         }
 
 
@@ -286,7 +334,7 @@ public class Scrapping {
         return resultat;
     }//fin lbc
 
-    public static String mesVinyles(String titre, String genre, String date, String prixmin, String prixmax)throws  IOException{
+    public String mesVinyles()throws  IOException{
         String resultat="";
 
         if(date.equals("")){
@@ -310,7 +358,9 @@ public class Scrapping {
 
         List<HtmlElement> liste = htmlPage.getByXPath("//div/div[2]/h3/a");
 
-        for(HtmlElement element :  liste){
+        for(HtmlElement element :  liste) {
+
+            for (int i = 0; i < liste.size();i++){
 
             HtmlPage page2 = element.click();
 
@@ -332,7 +382,7 @@ public class Scrapping {
 
                     String valeur = ((HtmlHeading1) page2.getByXPath("//h1[@class='h1 productpage_title']").get(0)).getTextContent();
 
-                    resultat +="Titre de l'album"+ valeur + "\n Prix : " + prixArticle + "€\n";
+                    resultat += "Titre de l'album" + valeur + "\n Prix : " + prixArticle + "€\n";
 
 
                     String descrip = "";
@@ -343,6 +393,9 @@ public class Scrapping {
                         descrip += d.getTextContent();
                     }
 
+                    String[] ajouter = {valeur, descrip, prixArticle, date};
+                    resuBDD.add(ajouter);
+
 
                     resultat += "Description : " + descrip + "\n";
                     resultat += page2.getUrl() + "\n\n";
@@ -350,16 +403,15 @@ public class Scrapping {
                 }
 
 
-
-
             }
+        }
 
         }
 
         return resultat;
     }
 
-    public static String cultureFac(String titre, String genre, String prixmin, String prixmax)throws  IOException{
+    public String cultureFac()throws  IOException{
 
         String resultat= "";
         String url = "https://culturefactory.fr/recherche?controller=search&s="+titre+" "+genre;
@@ -369,6 +421,9 @@ public class Scrapping {
         }
         if (prixmax.equals("")) {
             prixmax = "999999999";
+        }
+        if(date.equals("")){
+            date=".";
         }
 
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
@@ -380,11 +435,12 @@ public class Scrapping {
 
         List<HtmlElement> liste = htmlPage.getByXPath("//article/div[2]/h4/a");
 
-        for(HtmlElement element :  liste){
+        for(HtmlElement element :  liste) {
+            for (int i = 0; i < liste.size();i++){
 
-            if(element.getTextContent().contains(titre)){
+            if (element.getTextContent().contains(titre)) {
 
-                if(element.getTextContent().toLowerCase().contains("cd")  || element.getTextContent().toLowerCase().contains("vinyl")){
+                if (element.getTextContent().toLowerCase().contains("cd") || element.getTextContent().toLowerCase().contains("vinyl")) {
 
                     HtmlPage page2 = element.click();
                     String prixArticle = ((HtmlSpan) page2.getByXPath("//span[@class='price ']").get(0)).getTextContent();
@@ -398,7 +454,7 @@ public class Scrapping {
 
                         String valeur = ((HtmlHeading1) page2.getByXPath("//h1[@class='h1 namne_details']").get(0)).getTextContent();
 
-                        resultat +="Titre de l'album"+ valeur + "\n Prix : " + prixArticle + "€\n";
+                        resultat += "Titre de l'album" + valeur + "\n Prix : " + prixArticle + "€\n";
 
 
                         String descrip = "";
@@ -406,19 +462,22 @@ public class Scrapping {
                         List<HtmlElement> description = page2.getByXPath("//div[@class='product-description']");
 
                         for (HtmlElement d : description) {
-                            descrip += d.getTextContent()+"\n";
+                            descrip += d.getTextContent() + "\n";
                         }
 
                         resultat += "Description : " + descrip + "\n";
                         resultat += page2.getUrl() + "\n\n";
                         resultat += "================================================================================================\n";
 
+                        String[] ajouter = {valeur, descrip, prixArticle, date};
+                        resuBDD.add(ajouter);
 
                     }
 
 
                 }
             }
+        }
         }
 
 

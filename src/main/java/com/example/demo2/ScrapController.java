@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class ScrapController {
@@ -79,6 +81,11 @@ public class ScrapController {
 
     File fichierResultat = new File("resultat.txt");
     File modeEmploi = new File("modeEmploi.txt");
+    File paramFichier = new File("ParamBDD.txt");
+
+
+    ArrayList<String[]> resuBDD  = new ArrayList<String[]>();
+    int idGenre = 0;
 
     public void HomeScene() throws IOException {
         try{
@@ -102,7 +109,7 @@ public class ScrapController {
     protected void onClickParametresBDD() throws IOException{ HomeScene();}
 
     @FXML
-    protected void onClickRecherche()  {
+    protected void onClickRecherche() throws IOException {
 
         String nom = titre.getText();
         String genre = (String) menuGenre.getValue();
@@ -124,12 +131,28 @@ public class ScrapController {
 
         if(genre==null){
             genre="";
+        } else if (genre=="Rock") {
+            idGenre=1;
+        } else if (genre=="Blues") {
+            idGenre=2;
+        } else if (genre=="Jazz") {
+            idGenre=3;
+        } else if (genre=="Reggae") {
+            idGenre=4;
+        } else if (genre=="Funk") {
+            idGenre=5;
+        } else if (genre=="Electro") {
+            idGenre=6;
+        } else if (genre=="DubStep") {
+            idGenre=7;
+        } else if (genre=="Soul") {
+            idGenre=8;
         }
-
 
         if(nom==""){
 
             labelRecherche.setText("J'ai besoin d'une Titre...");
+
 
         }else{
             String site="";
@@ -137,126 +160,157 @@ public class ScrapController {
 
                 // resultat.setText(Scrapping.discogs(nom,genre, annee,prixMini,prixMaxi));
 
-                site="d";
+                barreRecherche.setProgress(0);
+                Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
+                resultat.setText(s.discogs());
 
+                resuBDD.addAll(s.getResuBDD());
+                barreRecherche.setProgress(100);
+
+
+
+
+                /*
+                barreRecherche.progressProperty().unbind();
+                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                site="c";
                 ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-
                 Thread scrapThread = new Thread(scrapTask);
-                scrapThread.start();
-                while(scrapThread.isAlive()){
-                    rechercheButton.setDisable(true);
-                    barreRecherche.setProgress(0);
-                    barreRecherche.progressProperty().unbind();
+                */
 
-                   barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                }
 
-                rechercheButton.setDisable(false);
-                resultat.setText(scrapTask.getResu());
+
+                //resultat.setText(scrapTask.getResu());
 
             } else if (fnac.isSelected()) {
 
                 //resultat.setText(Scrapping.fnac(nom,genre, annee, prixMini, prixMaxi));
 
-                site="f";
+                barreRecherche.setProgress(0);
+                Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
+                resultat.setText(s.fnac());
+
+                resuBDD.addAll(s.getResuBDD());
+                barreRecherche.setProgress(100);
+
+
+
+
+                /*
+                barreRecherche.progressProperty().unbind();
+                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                site="c";
                 ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-
-
-
                 Thread scrapThread = new Thread(scrapTask);
-                scrapThread.start();
-                while(scrapThread.isAlive()){
-                    rechercheButton.setDisable(true);
-                    barreRecherche.setProgress(0);
-                    barreRecherche.progressProperty().unbind();
+                */
 
-                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                }
 
-                rechercheButton.setDisable(false);
-                resultat.setText(scrapTask.getResu());
+
+                //resultat.setText(scrapTask.getResu());
 
 
             } else if (vinylcorn.isSelected()) {
 
                 //resultat.setText(Scrapping.vinylcorner(nom,genre, annee, prixMini, prixMaxi));
 
-                site="v";
+                barreRecherche.setProgress(0);
+                Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
+                resultat.setText(s.vinylcorner());
+
+                resuBDD.addAll(s.getResuBDD());
+                barreRecherche.setProgress(100);
+
+
+
+
+                /*
+                barreRecherche.progressProperty().unbind();
+                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                site="c";
                 ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-
                 Thread scrapThread = new Thread(scrapTask);
-                scrapThread.start();
-                while(scrapThread.isAlive()){
-                    rechercheButton.setDisable(true);
-                    barreRecherche.setProgress(0);
-                    barreRecherche.progressProperty().unbind();
+                */
 
-                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                }
 
-                rechercheButton.setDisable(false);
-                resultat.setText(scrapTask.getResu());
+
+                //resultat.setText(scrapTask.getResu());
 
 
             } else if (leboncoin.isSelected()) {
 
                // resultat.setText(Scrapping.leboncoin(nom,genre,prixMini,prixMaxi));
 
-                site="l";
+                barreRecherche.setProgress(0);
+                Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
+                resultat.setText(s.leboncoin());
+
+                resuBDD.addAll(s.getResuBDD());
+                barreRecherche.setProgress(100);
+
+
+
+
+                /*
+                barreRecherche.progressProperty().unbind();
+                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                site="c";
                 ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-
                 Thread scrapThread = new Thread(scrapTask);
-                scrapThread.start();
-                while(scrapThread.isAlive()){
-                    rechercheButton.setDisable(true);
-                    barreRecherche.setProgress(0);
-                    barreRecherche.progressProperty().unbind();
+                */
 
-                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                }
 
-                rechercheButton.setDisable(false);
-                resultat.setText(scrapTask.getResu());
 
+                //resultat.setText(scrapTask.getResu());
 
             } else if (mesvinyles.isSelected()) {
 
-                //resultat.setText(Scrapping.mesVinyles(nom,genre, annee, prixMini, prixMaxi));
-                site="m";
+                barreRecherche.setProgress(0);
+                Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
+                resultat.setText(s.mesVinyles());
+
+                resuBDD.addAll(s.getResuBDD());
+                barreRecherche.setProgress(100);
+
+
+
+
+                /*
+                barreRecherche.progressProperty().unbind();
+                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                site="c";
                 ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-
                 Thread scrapThread = new Thread(scrapTask);
-                scrapThread.start();
-                while(scrapThread.isAlive()){
-                    rechercheButton.setDisable(true);
-                    barreRecherche.setProgress(0);
-                    barreRecherche.progressProperty().unbind();
+                */
 
-                    barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                }
 
-                rechercheButton.setDisable(false);
-                resultat.setText(scrapTask.getResu());
+
+                //resultat.setText(scrapTask.getResu());
 
 
             } else if (culturefac.isSelected()) {
-
-                //resultat.setText(Scrapping.cultureFac(nom,genre,prixMini,prixMaxi));
-
-                site="c";
-                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-
-                Thread scrapThread = new Thread(scrapTask);
-
-
-                rechercheButton.setDisable(true);
                 barreRecherche.setProgress(0);
+                Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
+                resultat.setText(s.cultureFac());
+
+                resuBDD.addAll(s.getResuBDD());
+                barreRecherche.setProgress(100);
+
+
+
+
+                /*
                 barreRecherche.progressProperty().unbind();
                 barreRecherche.progressProperty().bind(scrapTask.progressProperty());
+                site="c";
+                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
+                Thread scrapThread = new Thread(scrapTask);
+                */
 
-                scrapThread.start();
 
-                resultat.setText(scrapTask.getResu());
+
+                //resultat.setText(scrapTask.getResu());
+
+
 
                 /*
                 @TODO
@@ -292,7 +346,7 @@ public class ScrapController {
     }
 
 
-    private void enregistrerFicher(String contenu, File fichier){
+    static void enregistrerFicher(String contenu, File fichier){
         try {
             PrintWriter writer = new PrintWriter(fichier);
             writer.println(contenu);
@@ -307,7 +361,7 @@ public class ScrapController {
         popupBDD();
     }
 
-    public void popupBDD() throws IOException {
+    private void popupBDD() throws IOException {
 
         Stage popupwindow=new Stage();
 
@@ -335,7 +389,7 @@ public class ScrapController {
         popupEmail();
     }
 
-    public void popupEmail() throws IOException {
+    private void popupEmail() throws IOException {
 
         Stage popupwindow=new Stage();
 
@@ -375,20 +429,25 @@ public class ScrapController {
     }
 
     public void onEffacerClick(){
+
         titre.clear();
         menuGenre.getSelectionModel().clearSelection();
         menuGenre.setPromptText("Selectionnez un genre....");
         date.setValue(null);
         prixMin.clear();
         prixMax.clear();
+
         discogs.setSelected(false);
         fnac.setSelected(false);
         vinylcorn.setSelected(false);
         leboncoin.setSelected(false);
         mesvinyles.setSelected(false);
         culturefac.setSelected(false);
+
         barreRecherche.setProgress(0);
         rechercheButton.setDisable(false);
+
+
     }
 
     public void onModeDemploiClick() throws IOException {

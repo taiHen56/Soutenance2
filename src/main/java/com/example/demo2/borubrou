@@ -1,0 +1,7 @@
+            for (int i = 0; i < liste.size();i++){
+
+
+                    resu[0][i]=valeur;
+                    resu[1][i]=descrip;
+                    resu[2][i]=prixArticle;
+                    resu[3][i]=date;
