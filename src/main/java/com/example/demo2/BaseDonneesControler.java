@@ -49,15 +49,19 @@ public class BaseDonneesControler {
     }
 
     @FXML
-    protected void onValiderClick(){
+    protected void onValiderClick() throws InterruptedException {
 
         if(nomServ.getText().matches("([0-9]+(\\.[0-9]+)+)") || nomServ.getText().equals("localhost")){
             if(nomBDD.getText().matches("[A-Za-z0-9]+")){
                 if(portBDD.getText().matches("[0-9]+")){
 
-                    String ecris = nomServ.getText() +"/" + nomBDD.getText()+"/" + portBDD.getText()+"/" + userBDD.getText()+"/" + mdpBDD.getText();
+                    System.out.println("je suis al");
 
+                    String ecris = nomServ.getText() +"/" + nomBDD.getText()+"/" + portBDD.getText()+"/" + userBDD.getText()+"/" + mdpBDD.getText();
                     ScrapController.enregistrerFicher(ecris,paramBDD);
+
+                    valider.setDisable(true);
+                    labelBDD.setText("Enregistré !  Merci");
 
                     onFermerClick();
 

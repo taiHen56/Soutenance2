@@ -43,7 +43,7 @@ public static void envoi(String pour, File fichier) {
     ApiClient defaultClient = Configuration.getDefaultApiClient();
     // Configure API key authorization: api-key
     ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
-    apiKey.setApiKey(regarde dans ton tel);
+    apiKey.setApiKey("regarde dans ton tel");
     try{
 
         TransactionalEmailsApi api = new TransactionalEmailsApi();

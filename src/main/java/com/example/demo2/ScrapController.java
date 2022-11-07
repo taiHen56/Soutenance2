@@ -372,7 +372,18 @@ public class ScrapController {
 
         Button button1= new Button("Valider");
         Button button2= new Button("Annuler");
-        button1.setOnAction(e ->label1.setText("NEVER GONNA GIVE YOU UP"));
+        button1.setOnAction(
+                new EventHandler<ActionEvent>() {
+                    @Override public void handle(ActionEvent event) {
+                        if(!resuBDD.isEmpty()){
+                            ConnexionBase.InsertRecherche(paramFichier, resuBDD, idGenre);
+                        }else{
+                            label1.setText("Vous n'avez pas fait de recherche !");
+                            label2.setText("hop hop hop non mais oh");
+                        }
+
+                    }
+                });
         button2.setOnAction(e -> popupwindow.close());
 
         VBox layout= new VBox(10);
@@ -463,7 +474,7 @@ public class ScrapController {
         FileReader fr = new FileReader(modeEmploi);
         // Créer l'objet BufferedReader
         BufferedReader br = new BufferedReader(fr);
-        StringBuffer sb = new StringBuffer();
+        //StringBuffer sb = new StringBuffer();
         String line;
         String resu = "";
         while((line = br.readLine()) != null)

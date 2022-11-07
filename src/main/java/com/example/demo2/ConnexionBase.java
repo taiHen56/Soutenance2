@@ -3,16 +3,16 @@ package com.example.demo2;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.math.BigDecimal;
+
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
+
 import java.io.IOException;
 
 
 public class ConnexionBase {
 
-    public static void InsertRecherche(,File fichier,ArrayList recherche, int genre){
+    public static void InsertRecherche(File fichier,ArrayList<String[]> recherche, int genre){
 
         System.out.println("On envoi le tout? LETS GO");
 
@@ -23,7 +23,7 @@ public class ConnexionBase {
             FileReader fr = new FileReader(fichier);
             // Créer l'objet BufferedReader
             BufferedReader br = new BufferedReader(fr);
-            StringBuffer sb = new StringBuffer();
+
             String line;
             String resu = "";
             while((line = br.readLine()) != null)
@@ -35,13 +35,23 @@ public class ConnexionBase {
             String[] champs = resu.split("[/]",5);
             String url="jdbc:mysql://"+champs[0]+":"+champs[2]+"/"+champs[1];
 
-            Connection conn = DriverManager.getConnection(
+            Connection con = DriverManager.getConnection(
                     url, champs[3], champs[4]);
 
-            /*
-            @TODO
-            ecrire l'insert & faire la requete
-             */
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM `recherche`");
+            rs.next();
+            int nbResu=rs.getInt("count(*)");
+
+
+            for(String[] r : recherche){
+                String insert= SQL_INSERT +
+                        " ('"+ nbResu +"','"+r[0]+"','"+r[1]+"','"+r[2]+"','"+genre+"','"+r[3]+"')";
+
+                PreparedStatement preparedStatement = con.prepareStatement(insert);
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+            }
 
 
         }catch (SQLException e) {

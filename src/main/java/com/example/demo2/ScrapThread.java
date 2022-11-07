@@ -21,37 +21,33 @@ public class ScrapThread extends Task {
     }
 
     public Object call(){
-        try {
         if(site.equals("d")){
 
-            out=Scrapping.discogs(nom,genre, annee,mini,max);
+            //out=Scrapping.discogs(nom,genre, annee,mini,max);
 
         }else if(site.equals("f")){
 
-            out=Scrapping.fnac(nom,genre, annee,mini,max);
+            //out=Scrapping.fnac(nom,genre, annee,mini,max);
 
         } else if (site.equals("v")) {
 
-            out=Scrapping.vinylcorner(nom,genre, annee,mini,max);
+            //out=Scrapping.vinylcorner(nom,genre, annee,mini,max);
 
         } else if (site.equals("l")) {
 
-            out=Scrapping.leboncoin(nom,genre,annee, mini,max);
+            //out=Scrapping.leboncoin(nom,genre,annee, mini,max);
 
 
         }else if ((site.equals("m"))){
 
-            out=Scrapping.mesVinyles(nom,genre, annee,mini,max);
+            //ut=Scrapping.mesVinyles(nom,genre, annee,mini,max);
 
 
         } else if (site.equals("c")) {
 
-            out=Scrapping.cultureFac(nom,genre,annee,mini,max);
+            //out=Scrapping.cultureFac(nom,genre,annee,mini,max);
 
         }
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
 
         return null;
     }
