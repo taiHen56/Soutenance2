@@ -289,10 +289,11 @@ public class ScrapController {
 
             } else if (culturefac.isSelected()) {
                 barreRecherche.setProgress(0);
-                Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
-                resultat.setText(s.cultureFac());
+                Scrapping scrap= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
+                String scrapping=scrap.cultureFac();
+                resultat.setText(scrapping);
 
-                resuBDD.addAll(s.getResuBDD());
+                resuBDD.addAll(scrap.getResuBDD());
                 barreRecherche.setProgress(100);
 
 
@@ -376,7 +377,11 @@ public class ScrapController {
                 new EventHandler<ActionEvent>() {
                     @Override public void handle(ActionEvent event) {
                         if(!resuBDD.isEmpty()){
-                            ConnexionBase.InsertRecherche(paramFichier, resuBDD, idGenre);
+                            if(paramFichier.length()!=0){
+                                ConnexionBase.InsertRecherche(paramFichier, resuBDD, idGenre);
+                            }else{
+                                label1.setText("Définis déjà tes paramètres de BDD oh");
+                            }
                         }else{
                             label1.setText("Vous n'avez pas fait de recherche !");
                             label2.setText("hop hop hop non mais oh");
@@ -417,12 +422,13 @@ public class ScrapController {
         button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 if(email.getText().matches(".+@.+" )){
-                   // label1.setText("NEVER GONNA GIVE YOU UP");
+                    if (fichierResultat.length() != 0) {
+                        enregistrerFicher(resultat.getText(), fichierResultat);
 
-                    enregistrerFicher(resultat.getText(), fichierResultat);
-
-                    EnvoiEmail.envoi(email.getText(),fichierResultat);
-
+                        EnvoiEmail.envoi(email.getText(),fichierResultat);
+                    }else{
+                        label1.setText("Mais fais une recherche déjà avant d'envoyer des emails");
+                    }
                 }else{
                     label1.setText("C'est pas un email ça bg");
                 }

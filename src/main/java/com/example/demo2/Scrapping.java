@@ -10,13 +10,13 @@ import java.util.List;
 
 public class Scrapping {
 
-    private String nom,titre,genre,date,prixmin,prixmax;
+    private String titre,genre,date,prixmin,prixmax;
     private ArrayList<String[]> resuBDD;
 
 
 
     public Scrapping(String titre, String genre, String date, String prixmin, String prixmax){
-        this.nom=nom;
+        this.titre=titre;
         this.genre=genre;
         this.date=date;
         this.prixmin=prixmin;
@@ -436,9 +436,8 @@ public class Scrapping {
         List<HtmlElement> liste = htmlPage.getByXPath("//article/div[2]/h4/a");
 
         for(HtmlElement element :  liste) {
-            for (int i = 0; i < liste.size();i++){
 
-            if (element.getTextContent().contains(titre)) {
+            if ( element.getTextContent().contains(titre) ) {
 
                 if (element.getTextContent().toLowerCase().contains("cd") || element.getTextContent().toLowerCase().contains("vinyl")) {
 
@@ -477,7 +476,7 @@ public class Scrapping {
 
                 }
             }
-        }
+
         }
 
 

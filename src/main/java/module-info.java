@@ -6,7 +6,7 @@ module com.example.demo2 {
     requires com.dlsc.formsfx;
     requires htmlunit;
     requires sib.api.v3.sdk;
-
+    requires mysql.connector.java;
 
     requires java.sql;
 
