@@ -37,6 +37,13 @@ public class Scrapping {
                 "&year=" + date;
         String resultat = "x";
 
+        if(genre.equals("")){
+            url.replace("&style=","");
+        }
+        if(date.equals("")){
+            url.replace("&year=","");
+        }
+
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
 
         webClient.getOptions().setUseInsecureSSL(true);
@@ -48,7 +55,7 @@ public class Scrapping {
 
         for (HtmlElement element : liste) {
 
-            for (int i = 0; i < liste.size();i++){
+
             String valeur = element.getTextContent();
 
 
@@ -69,10 +76,8 @@ public class Scrapping {
                 List<HtmlElement> description = page2.getByXPath("//div/div[2]/div[2]");
 
                 for (HtmlElement d : description) {
-                    String descrip = d.getTextContent();
+                    String descrip = d.getTextContent().replaceAll("(?m)^[ \t]*\r?\n", "");
 
-                    descrip = descrip.replaceAll("\\s+ ", "");
-                    //descrip = descrip.replaceAll("\n", "");
                     descrip = descrip.replaceAll("PositionArtistsTitle/CreditsDuration1", "");
                     descrip = descrip.replaceAll("PositionTitle/CreditsDuration1", "");
 
@@ -92,7 +97,7 @@ public class Scrapping {
 
         }
 
-        }
+
         return resultat;
     }//fin discogs
 
@@ -205,7 +210,9 @@ public class Scrapping {
 
     public String vinylcorner() throws IOException {
 
-        String url = "https://www.vinylcorner.fr/recherche?controller=search&s=" + titre + "+" + genre;
+        int idGenre = trouverMonGenre(genre);
+
+        String url = "https://www.vinylcorner.fr/catalogsearch/result/?q=" + titre + "&category=" + idGenre;
 
         String resultat = "";
         if (prixmin.equals("")) {
@@ -214,15 +221,9 @@ public class Scrapping {
         if (prixmax.equals("")) {
             prixmax = "999999999";
         }
-        if (genre.equals("")){
-            genre=".";
-        }
         if(date.equals("")){
             date=".";
         }
-
-
-
 
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
 
@@ -231,26 +232,19 @@ public class Scrapping {
         webClient.getOptions().setJavaScriptEnabled(false);
         HtmlPage htmlPage = webClient.getPage(url);
 
-        List<HtmlElement> liste = htmlPage.getByXPath("//h2/a");
+        List<HtmlElement> liste = htmlPage.getByXPath("//div/div[2]/strong/a");
 
         for (HtmlElement element : liste) {
-            for (int i = 0; i < liste.size();i++){
 
+            HtmlPage page2 = element.click();
 
-                HtmlPage page2 = element.click();
-
-            String genra = ((HtmlParagraph) page2.getByXPath("//p[@class='ref-genre-cat show-list-only']").get(0)).getTextContent();
-            genra += ".";
-
-            if (genra.contains(genre)) {
-
-                String parution = ((HtmlStrong) page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[1]/p[2]/strong").get(0)).getTextContent();
+                String parution = ((HtmlParagraph) page2.getByXPath("//div/div/div[1]/div[2]/p[2]").get(0)).getTextContent();
                 parution += ".";
 
                 if (parution.contains(date)) {
 
-                    String valeur = ((HtmlHeading2) page2.getByXPath("//div[1]/h2").get(0)).getTextContent();
-                    String prixArticle = ((HtmlElement) page2.getByXPath("/html/body/main/section/div[2]/div/div/div/section/div[1]/div[2]/div[2]/div[1]/div/span").get(0)).getTextContent();
+                    String valeur = ((HtmlSpan) page2.getByXPath("//span[@class='base']").get(0)).getTextContent();
+                    String prixArticle = ((HtmlSpan) page2.getByXPath("//span[@class='price']").get(0)).getTextContent();
 
                     prixArticle = prixArticle.replace("€", "");
                     prixArticle = prixArticle.replaceAll("\\s+", "");
@@ -264,10 +258,10 @@ public class Scrapping {
 
                         String descrip = "";
 
-                        List<HtmlElement> description = page2.getByXPath("//div[@class='features']");
+                        List<HtmlElement> description = page2.getByXPath("//div[@class='product-specifications']");
 
                         for (HtmlElement d : description) {
-                            descrip += d.getTextContent();
+                            descrip += d.getTextContent().replaceAll("(?m)^[ \t]*\r?\n", "") + "\n";
                         }
 
                         descrip = descrip.replace(valeur, "");
@@ -282,8 +276,8 @@ public class Scrapping {
                     }
 
                 }
-            }
-        }
+
+
         }
         return resultat;
     }//fin vinylcorner
@@ -461,7 +455,7 @@ public class Scrapping {
                         List<HtmlElement> description = page2.getByXPath("//div[@class='product-description']");
 
                         for (HtmlElement d : description) {
-                            descrip += d.getTextContent() + "\n";
+                            descrip += d.getTextContent().replaceAll("(?m)^[ \t]*\r?\n", "") + "\n";
                         }
 
                         resultat += "Description : " + descrip + "\n";
@@ -470,6 +464,8 @@ public class Scrapping {
 
                         String[] ajouter = {valeur, descrip, prixArticle, date};
                         resuBDD.add(ajouter);
+
+
 
                     }
 
@@ -486,6 +482,27 @@ public class Scrapping {
 
 
         return resultat;
+    }
+
+    private int trouverMonGenre(String g){
+
+        switch (g) {
+            case "Rock":
+                return 5;
+            case "Blues":
+            case "Jazz":
+                return 11;
+            case "Reggae":
+                return 10;
+            case "Funk":
+                return 9;
+            case "Electro":
+                return 7;
+            case "Soul":
+                return 9;
+            default:
+                return 3;
+        }
     }
 
 
