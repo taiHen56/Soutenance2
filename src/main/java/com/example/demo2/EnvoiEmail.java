@@ -62,6 +62,7 @@ public static void envoi(String pour, File fichier) {
 
         SendSmtpEmailAttachment attachment = new SendSmtpEmailAttachment();
         attachment.setName("modeEmploi.txt");
+
         byte[] encode = Files.readAllBytes(Paths.get(fichier.toURI()));
         attachment.setContent(encode);
         List<SendSmtpEmailAttachment> attachmentList = new ArrayList<SendSmtpEmailAttachment>();

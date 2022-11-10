@@ -1,12 +1,18 @@
 package com.example.demo2;
+/**
+ * Contrôleur de l'IHM principale
+ * @author Rafael Tavares
+ * @version 4.5
+ * @since 0.0
+ */
 
-import com.gargoylesoftware.htmlunit.WebClient;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
+
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -18,7 +24,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Objects;
 
 
 public class ScrapController {
@@ -86,16 +92,18 @@ public class ScrapController {
 
     ArrayList<String[]> resuBDD  = new ArrayList<String[]>();
     int idGenre = 0;
-
-    public void HomeScene() throws IOException {
+/**
+*  Méthode pour créér une fenêtre pour les paramètres BDD
+* @throws IOException s'il trouve pas le fichier.xml a prendre
+ */
+    private void fenetreBDD() throws IOException {
         try{
-            WebClient oe = new WebClient();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("BaseDonnees.fxml"));
             Parent root = fxmlLoader.load();
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setOpacity(1);
-            stage.setTitle("My New Stage Title");
+            stage.setTitle("Parametres Base de Données");
             stage.setScene(new Scene(root, 450, 515));
             stage.showAndWait();
         }catch(IOException e){
@@ -104,10 +112,19 @@ public class ScrapController {
 
 
     }
-
+    /**
+     *
+     * Methode pour appeler fenetreBDD()
+     */
     @FXML
-    protected void onClickParametresBDD() throws IOException{ HomeScene();}
+    protected void onClickParametresBDD() throws IOException{ fenetreBDD();}
 
+    /**
+     * Methode qui fait les differentes recherche Scraping sur differents sites. C'est egalement ici qu'on donne une valeur a idGenre & la ArrayList
+     * qui vont nous servir pour envoyer la recherche dans une BDD
+     * Récupère les informations pour dans la fenetre IHM
+     * @throws IOException s'il arrive pas a avoir le resultat du Scraping
+     */
     @FXML
     protected void onClickRecherche() throws IOException {
 
@@ -131,34 +148,32 @@ public class ScrapController {
 
         if(genre==null){
             genre="";
-        } else if (genre=="Rock") {
+        } else if (genre.equals("Rock")) {
             idGenre=1;
-        } else if (genre=="Blues") {
+        } else if (genre.equals("Blues")) {
             idGenre=2;
-        } else if (genre=="Jazz") {
+        } else if (genre.equals("Jazz")) {
             idGenre=3;
-        } else if (genre=="Reggae") {
+        } else if (genre.equals("Reggae")) {
             idGenre=4;
-        } else if (genre=="Funk") {
+        } else if (genre.equals("Funk")) {
             idGenre=5;
-        } else if (genre=="Electro") {
+        } else if (genre.equals("Electro")) {
             idGenre=6;
-        } else if (genre=="DubStep") {
+        } else if (genre.equals("DubStep")) {
             idGenre=7;
-        } else if (genre=="Soul") {
+        } else if (genre.equals("Soul")) {
             idGenre=8;
         }
 
-        if(nom==""){
+        if(Objects.equals(nom, "")){
 
             labelRecherche.setText("J'ai besoin d'une Titre...");
 
 
         }else{
-            String site="";
             if (discogs.isSelected()) {
 
-                // resultat.setText(Scrapping.discogs(nom,genre, annee,prixMini,prixMaxi));
 
                 barreRecherche.setProgress(0);
                 Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
@@ -169,22 +184,9 @@ public class ScrapController {
 
 
 
-
-                /*
-                barreRecherche.progressProperty().unbind();
-                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                site="c";
-                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-                Thread scrapThread = new Thread(scrapTask);
-                */
-
-
-
-                //resultat.setText(scrapTask.getResu());
-
             } else if (fnac.isSelected()) {
 
-                //resultat.setText(Scrapping.fnac(nom,genre, annee, prixMini, prixMaxi));
+
 
                 barreRecherche.setProgress(0);
                 Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
@@ -196,22 +198,9 @@ public class ScrapController {
 
 
 
-                /*
-                barreRecherche.progressProperty().unbind();
-                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                site="c";
-                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-                Thread scrapThread = new Thread(scrapTask);
-                */
-
-
-
-                //resultat.setText(scrapTask.getResu());
-
-
             } else if (vinylcorn.isSelected()) {
 
-                //resultat.setText(Scrapping.vinylcorner(nom,genre, annee, prixMini, prixMaxi));
+
 
                 barreRecherche.setProgress(0);
                 Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
@@ -223,22 +212,8 @@ public class ScrapController {
 
 
 
-                /*
-                barreRecherche.progressProperty().unbind();
-                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                site="c";
-                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-                Thread scrapThread = new Thread(scrapTask);
-                */
-
-
-
-                //resultat.setText(scrapTask.getResu());
-
-
             } else if (leboncoin.isSelected()) {
 
-               // resultat.setText(Scrapping.leboncoin(nom,genre,prixMini,prixMaxi));
 
                 barreRecherche.setProgress(0);
                 Scrapping s= new Scrapping(nom,genre,annee, prixMini,prixMaxi);
@@ -250,18 +225,6 @@ public class ScrapController {
 
 
 
-                /*
-                barreRecherche.progressProperty().unbind();
-                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                site="c";
-                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-                Thread scrapThread = new Thread(scrapTask);
-                */
-
-
-
-                //resultat.setText(scrapTask.getResu());
-
             } else if (mesvinyles.isSelected()) {
 
                 barreRecherche.setProgress(0);
@@ -272,19 +235,6 @@ public class ScrapController {
                 barreRecherche.setProgress(100);
 
 
-
-
-                /*
-                barreRecherche.progressProperty().unbind();
-                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                site="c";
-                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-                Thread scrapThread = new Thread(scrapTask);
-                */
-
-
-
-                //resultat.setText(scrapTask.getResu());
 
 
             } else if (culturefac.isSelected()) {
@@ -299,27 +249,6 @@ public class ScrapController {
 
 
 
-                /*
-                barreRecherche.progressProperty().unbind();
-                barreRecherche.progressProperty().bind(scrapTask.progressProperty());
-                site="c";
-                ScrapThread scrapTask = new ScrapThread(site,nom,genre, annee,prixMini,prixMaxi);
-                Thread scrapThread = new Thread(scrapTask);
-                */
-
-
-
-                //resultat.setText(scrapTask.getResu());
-
-
-
-                /*
-                @TODO
-                continue a chercher pour la progressbar, tu peux la mettre a 100 des que t'as un resultat oklm
-                 */
-
-
-
             } else {
                 labelRecherche.setText("Veuillez selectionner un site!");
             }
@@ -329,6 +258,11 @@ public class ScrapController {
 
     }//onClickRecherche
 
+    /**
+     * Methode pour creer une nouvelle fenetre pour ainsi enregistrer un fichier de type texte
+     * @param event
+     * @throws FileNotFoundException
+     */
     public void saveFile(ActionEvent event) throws FileNotFoundException {
 
         Stage stage = new Stage();
@@ -346,7 +280,13 @@ public class ScrapController {
 
     }
 
-
+    /**
+     *
+     * methode qui enregistre une string dans un fichier
+     * @param contenu a enregistrer
+     * @param fichier où enregisrter
+     * @throws IOException si le processus est interrompu ou si le fichier n'est plus disponible
+     */
     static void enregistrerFicher(String contenu, File fichier){
         try {
             PrintWriter writer = new PrintWriter(fichier);
@@ -357,11 +297,20 @@ public class ScrapController {
         }
     }
 
+    /**
+     * Appelle la methode popupBDD
+     * @throws IOException
+     */
     @FXML
     protected void onEnregistrerBDDClick() throws IOException{
         popupBDD();
     }
 
+    /**
+     *
+     * Methode consistant a envoyer la recherche sur la base de données grace aux paramètres ecris au prealable dans un fichier (fenetreBDD())
+     * @throws IOException
+     */
     private void popupBDD() throws IOException {
 
         Stage popupwindow=new Stage();
@@ -400,11 +349,19 @@ public class ScrapController {
 
     }
 
+    /**
+     * appelle la methode popoupEmail
+     * @throws IOException
+     */
     @FXML
     protected void onEmailClick() throws IOException{
         popupEmail();
     }
 
+    /**
+     * Envoi un email a condition que ce dernier soit bien ecrit
+     * @throws IOException
+     */
     private void popupEmail() throws IOException {
 
         Stage popupwindow=new Stage();
@@ -445,6 +402,9 @@ public class ScrapController {
 
     }
 
+    /**
+     * Reinitialise tout les champs de la fenêtre IHM
+     */
     public void onEffacerClick(){
 
         titre.clear();
@@ -467,6 +427,10 @@ public class ScrapController {
 
     }
 
+    /**
+     * Ouvre une fenêtre pour avoir droit au mode d'emploi
+     * @throws IOException
+     */
     public void onModeDemploiClick() throws IOException {
 
         Stage popupwindow=new Stage();

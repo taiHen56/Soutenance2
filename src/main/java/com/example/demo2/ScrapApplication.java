@@ -1,5 +1,11 @@
 package com.example.demo2;
 
+/**
+ * Application de l'IHM principale
+ * @author Rafael Tavares
+ * @version 1.0
+ * @since 1.0
+ */
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

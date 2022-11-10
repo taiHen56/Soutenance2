@@ -14,7 +14,14 @@ public class Scrapping {
     private ArrayList<String[]> resuBDD;
 
 
-
+    /**
+     *Constructeur de Scrapping. Il prend tout en constructeur pour pouvoir ensuite les utiliser dans les differentes methodes
+     * @param titre Titre recherché
+     * @param genre Genre voulu
+     * @param date Date
+     * @param prixmin Prix minimum renseigné
+     * @param prixmax prix maximum renseigné
+     */
     public Scrapping(String titre, String genre, String date, String prixmin, String prixmax){
         this.titre=titre;
         this.genre=genre;
@@ -24,24 +31,34 @@ public class Scrapping {
         resuBDD = new ArrayList<String[]>();
     }
 
+    /**
+     *
+     * Methode qui retourne la ArrayList de chaque résultat
+     * @return
+     */
     public ArrayList<String[]> getResuBDD() {
         return resuBDD;
     }
 
+    /**
+     * Methode qui fait le Scraping dans Discogs.fr
+     * @return String resultat
+     * @throws IOException
+     */
     public String discogs() throws IOException {
 
         String url = "https://www.discogs.com/fr/sell/list?price1=" + prixmin +
                 "&price2=" + prixmax +
-                "&currency=EUR&q=" + titre +
-                "&style=" + genre +
-                "&year=" + date;
-        String resultat = "x";
+                "&currency=EUR&q=" + titre;
 
-        if(genre.equals("")){
-            url.replace("&style=","");
+
+        String resultat = "";
+
+        if(!genre.equals("")){
+            url+="&style=" + genre;
         }
-        if(date.equals("")){
-            url.replace("&year=","");
+        if(!date.equals("")){
+            url+="&year=" + date;
         }
 
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
@@ -100,7 +117,11 @@ public class Scrapping {
 
         return resultat;
     }//fin discogs
-
+    /**
+     * Methode qui fait le Scraping dans fnac.fr
+     * @return String resultat
+     * @throws IOException
+     */
     public String fnac() throws IOException {
 
         String url = "https://www.fnac.com/SearchResult/ResultList.aspx?SCat=3!1&SDM=list&Search="
@@ -207,7 +228,11 @@ public class Scrapping {
 
         return resultat;
     }//fin fnac
-
+    /**
+     * Methode qui fait le Scraping dans VinylCorner.fr
+     * @return String resultat
+     * @throws IOException
+     */
     public String vinylcorner() throws IOException {
 
         int idGenre = trouverMonGenre(genre);
@@ -282,7 +307,11 @@ public class Scrapping {
         return resultat;
     }//fin vinylcorner
 
-
+    /**
+     * Methode qui fait le Scraping dans Leboncoin.fr
+     * @return String resultat
+     * @throws IOException
+     */
     public String leboncoin() throws  IOException{
 
         if (genre.equals("")){
@@ -327,7 +356,11 @@ public class Scrapping {
 
         return resultat;
     }//fin lbc
-
+    /**
+     * Methode qui fait le Scraping dans mesVinyles.fr
+     * @return String resultat
+     * @throws IOException
+     */
     public String mesVinyles()throws  IOException{
         String resultat="";
 
@@ -353,8 +386,6 @@ public class Scrapping {
         List<HtmlElement> liste = htmlPage.getByXPath("//div/div[2]/h3/a");
 
         for(HtmlElement element :  liste) {
-
-            for (int i = 0; i < liste.size();i++){
 
             HtmlPage page2 = element.click();
 
@@ -384,7 +415,7 @@ public class Scrapping {
                     List<HtmlElement> description = page2.getByXPath("//div[@class='product-description']");
 
                     for (HtmlElement d : description) {
-                        descrip += d.getTextContent();
+                        descrip += d.getTextContent().replaceAll("(?m)^[ \t]*\r?\n", "");
                     }
 
                     String[] ajouter = {valeur, descrip, prixArticle, date};
@@ -398,13 +429,18 @@ public class Scrapping {
 
 
             }
-        }
+
 
         }
 
         return resultat;
     }
 
+    /**
+     * Methode qui fait le Scraping dans CultureFactory.fr
+     * @return String resultat
+     * @throws IOException
+     */
     public String cultureFac()throws  IOException{
 
         String resultat= "";
@@ -483,7 +519,10 @@ public class Scrapping {
 
         return resultat;
     }
-
+    /**
+     * Methode qui fait le Scraping dans Discogs.fr
+     * @return int Genre pour mieux rechercher
+     */
     private int trouverMonGenre(String g){
 
         switch (g) {

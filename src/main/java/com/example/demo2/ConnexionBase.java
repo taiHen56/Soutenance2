@@ -8,6 +8,13 @@ import java.util.ArrayList;
 
 public class ConnexionBase {
 
+    /**
+     * Methode qui envoie les resultats de la recherche a la base de donnees sous forme de requête SQL
+     * @param fichier ou son enregistrés les paramètres, sous forme d'une ligne séparé par des / = (adresse/nomBDD/port/utilisateur/mot de passe)
+     * @param recherche Une liste de liste String, obtenue grâce au Scraping
+     * @param genre Le genre définit grâce a la recherche
+     */
+
     public static void InsertRecherche(File fichier, ArrayList<String[]> recherche, int genre) {
 
         System.out.println("On envoi le tout? LETS GO");
@@ -49,7 +56,12 @@ public class ConnexionBase {
         }
     }
 
-        private static String[] getDonnees(File fichier){
+    /**
+     * Methode permettant de retroucher les donnees enregistrés dans le fichier .txt
+     * @param fichier
+     * @return String[] donnees, ou [0] est l'url [1] l'utilisateur & [2] le mot de passe
+     */
+    private static String[] getDonnees(File fichier){
 
 
             String[] donnees = new String[3];

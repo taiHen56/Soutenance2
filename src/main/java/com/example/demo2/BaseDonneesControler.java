@@ -1,19 +1,17 @@
 package com.example.demo2;
 
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.stage.*;
+/**
+ * Contrôleur de l'IHM des paramètres de la BDD
+ * @author Rafael Tavares
+ * @version 4.5
+ * @since 0.0
+ */
 
+
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.stage.*;
 import java.io.File;
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.IOException;
 
 public class BaseDonneesControler {
 
@@ -40,7 +38,9 @@ public class BaseDonneesControler {
     File paramBDD = new File("ParamBDD.txt");
 
 
-
+    /**
+     * Methode pour fermer la fenêtre a l'aide d'un bouton
+     */
     @FXML
     protected void onFermerClick(){
         Stage stage = (Stage) fermer.getScene().getWindow();
@@ -48,6 +48,10 @@ public class BaseDonneesControler {
         stage.close();
     }
 
+    /**
+     * Methode qui permet d'enregistrer les données dans un fichier. Verification d'abord de ces dernières pour être sûr qu'elles sont conformes
+     * @throws InterruptedException
+     */
     @FXML
     protected void onValiderClick() throws InterruptedException {
 
